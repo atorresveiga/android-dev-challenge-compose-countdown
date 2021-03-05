@@ -17,20 +17,27 @@ package com.example.androiddevchallenge
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.androiddevchallenge.ui.theme.MyTheme
+import androidx.core.view.WindowCompat
+import com.example.androiddevchallenge.ui.countdown.CountDownScreen
+import com.example.androiddevchallenge.ui.countdown.CountDownViewModel
+import com.example.androiddevchallenge.ui.theme.CountDownTimerTheme
 
 class MainActivity : AppCompatActivity() {
+
+    private val countDownViewModel by viewModels<CountDownViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
         setContent {
-            MyTheme {
-                MyApp()
+            CountDownTimerTheme {
+                CountDownTimerApp(countDownViewModel)
             }
         }
     }
@@ -38,24 +45,14 @@ class MainActivity : AppCompatActivity() {
 
 // Start building your app here!
 @Composable
-fun MyApp() {
-    Surface(color = MaterialTheme.colors.background) {
-        Text(text = "Ready... Set... GO!")
-    }
-}
-
-@Preview("Light Theme", widthDp = 360, heightDp = 640)
-@Composable
-fun LightPreview() {
-    MyTheme {
-        MyApp()
-    }
-}
-
-@Preview("Dark Theme", widthDp = 360, heightDp = 640)
-@Composable
-fun DarkPreview() {
-    MyTheme(darkTheme = true) {
-        MyApp()
+fun CountDownTimerApp(countDownViewModel: CountDownViewModel) {
+    Surface {
+        CountDownScreen(
+            countDownViewModel.time,
+            countDownViewModel::onTimeChanged,
+            countDownViewModel.state,
+            countDownViewModel::onStateChanged,
+            countDownViewModel.progress
+        )
     }
 }
