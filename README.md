@@ -1,9 +1,8 @@
-# Put title of your app here
+# Compose Countdown
 
 <!--- Replace <OWNER> with your Github Username and <REPOSITORY> with the name of your repository. -->
 <!--- You can find both of these in the url bar when you open your repository in github. -->
 ![Workflow result](https://github.com/atorresveiga/android-dev-challenge-compose-countdown/workflows/Check/badge.svg)
-
 
 ## :scroll: Description
 <!--- Describe your app in one or two sentences -->
@@ -13,11 +12,11 @@ A simple Countdown App to play with compose state & animations.
 <!--- Optionally point readers to interesting parts of your submission. -->
 <!--- What are you especially proud of? -->
 
-It is really incredible how flexible is compose, you can fully customize any control.
+It is incredible how flexible compose is. You can fully customize any control.
 
-I'm very proud of the BasicPeriodInputText I could full fill my expectations for the use case I was aiming for and... it was very simple to accomplish.
+I'm very proud of the BasicPeriodInputText I could fulfill my expectations for the use case I was aiming for and, it was simple to accomplish.
 
-The animations needs some more work though.
+The animations need some more work, though.
 
 The inspiration came from [uplabs](https://www.uplabs.com/posts/countdown-timer-page-animation)
 
