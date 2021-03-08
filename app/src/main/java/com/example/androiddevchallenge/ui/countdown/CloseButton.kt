@@ -30,7 +30,7 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Stop
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.dp
 import com.example.androiddevchallenge.R
 
 @Composable
-fun StopButton(state: TimerState, onStateChange: (TimerState) -> Unit) {
+fun CloseButton(state: TimerState, onStateChange: (TimerState) -> Unit) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.BottomEnd
@@ -75,7 +75,7 @@ fun StopButton(state: TimerState, onStateChange: (TimerState) -> Unit) {
         ) {
             Icon(
                 modifier = Modifier.alpha(transitionData.alpha),
-                imageVector = Icons.Default.Stop,
+                imageVector = Icons.Default.Close,
                 contentDescription = stringResource(id = R.string.button_stop)
             )
         }
