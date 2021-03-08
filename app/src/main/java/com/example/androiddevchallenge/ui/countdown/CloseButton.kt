@@ -99,14 +99,32 @@ private class CloseButtonTransitionData(
 @Composable
 private fun updateCloseButtonTransitionData(state: TimerState): CloseButtonTransitionData {
     val transition = updateTransition(state)
-    val size = transition.animateDp { timerState ->
+    val size = transition.animateDp(
+        transitionSpec = {
+            keyframes {
+                if (TimerState.Stop isTransitioningTo TimerState.Running) {
+                    delayMillis = 200
+                }
+                durationMillis = 250
+            }
+        }
+    ) { timerState ->
         if (timerState == TimerState.Stop) {
             10.dp
         } else {
             48.dp
         }
     }
-    val cornerRadius = transition.animateDp { timerState ->
+    val cornerRadius = transition.animateDp(
+        transitionSpec = {
+            keyframes {
+                if (TimerState.Stop isTransitioningTo TimerState.Running) {
+                    delayMillis = 200
+                }
+                durationMillis = 250
+            }
+        }
+    ) { timerState ->
         if (timerState == TimerState.Stop) {
             5.dp
         } else {
@@ -117,11 +135,12 @@ private fun updateCloseButtonTransitionData(state: TimerState): CloseButtonTrans
         transitionSpec = {
             if (TimerState.Running isTransitioningTo TimerState.Stop) {
                 keyframes {
-                    durationMillis = 50
+                    durationMillis = 100
                 }
             } else {
                 keyframes {
-                    durationMillis = 150
+                    delayMillis = 250
+                    durationMillis = 215
                 }
             }
         }
@@ -132,14 +151,32 @@ private fun updateCloseButtonTransitionData(state: TimerState): CloseButtonTrans
             1f
         }
     }
-    val paddingEnd = transition.animateDp { timerState ->
+    val paddingEnd = transition.animateDp(
+        transitionSpec = {
+            keyframes {
+                if (TimerState.Stop isTransitioningTo TimerState.Running) {
+                    delayMillis = 200
+                }
+                durationMillis = 250
+            }
+        }
+    ) { timerState ->
         if (timerState == TimerState.Stop) {
             60.dp
         } else {
             32.dp
         }
     }
-    val paddingBottom = transition.animateDp { timerState ->
+    val paddingBottom = transition.animateDp(
+        transitionSpec = {
+            keyframes {
+                if (TimerState.Stop isTransitioningTo TimerState.Running) {
+                    delayMillis = 200
+                }
+                durationMillis = 250
+            }
+        }
+    ) { timerState ->
         if (timerState == TimerState.Stop) {
             115.dp
         } else {

@@ -39,7 +39,7 @@ fun CountDownScreen(
         QuickTimeSelection(onTimeChange = onTimeChange, modifier = Modifier.weight(1f))
     }
     PlayButton(state, onStateChange)
-    StopButton(state, onStateChange)
+    CloseButton(state, onStateChange)
 }
 
 enum class TimerState {

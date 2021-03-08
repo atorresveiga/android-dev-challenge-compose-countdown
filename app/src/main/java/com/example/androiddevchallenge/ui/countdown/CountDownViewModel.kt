@@ -56,7 +56,7 @@ class CountDownViewModel : ViewModel() {
                             time -= 1
                             progress = (time * 100) / totalTime
                         }
-                        delay(300)
+                        delay(400)
                         onStateChanged(TimerState.Stop)
                     }
                 }

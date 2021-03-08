@@ -35,6 +35,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -42,40 +43,51 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun ProgressBackground(state: TimerState, progress: Int) {
 
-    BoxWithConstraints(
-        modifier = Modifier
-            .fillMaxSize(),
-        contentAlignment = Alignment.BottomCenter
-    ) {
+    BoxWithConstraints {
+        val realMaxHeight = maxHeight
 
-        val transitionData = updateProgressTransitionData(
-            state = state,
-            progress = progress,
-            maxHeight = maxHeight,
-            maxWidth = maxWidth
-        )
-
-        Box(
+        BoxWithConstraints(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(bottom = transitionData.padding),
+                .layout { measurable, constraints ->
+                    val sideSize = constraints.maxWidth / 2 + constraints.maxHeight
+                    val bigConstraints = constraints.copy(maxWidth = sideSize, maxHeight = sideSize)
+                    val placeable = measurable.measure(bigConstraints)
+                    layout(placeable.width, placeable.height) {
+                        placeable.place(0, 0)
+                    }
+                },
             contentAlignment = Alignment.BottomCenter
         ) {
 
-            Column(
+            val transitionData = updateProgressTransitionData(
+                state = state,
+                progress = progress,
+                maxHeight = maxHeight,
+                realMaxHeight
+            )
+
+            Box(
                 modifier = Modifier
-                    .width(transitionData.width)
-                    .height(transitionData.height)
-                    .background(
-                        color = MaterialTheme.colors.primary,
-                        shape = RoundedCornerShape(
-                            CornerSize(transitionData.cornerRadius),
-                            CornerSize(transitionData.cornerRadius),
-                            CornerSize(transitionData.cornerRadius),
-                            CornerSize(transitionData.cornerRadius)
-                        )
-                    ),
-            ) {}
+                    .padding(bottom = transitionData.padding)
+                    .fillMaxSize(),
+                contentAlignment = Alignment.BottomCenter
+            ) {
+
+                Column(
+                    modifier = Modifier
+                        .width(transitionData.width)
+                        .height(transitionData.height)
+                        .background(
+                            color = MaterialTheme.colors.primary,
+                            shape = RoundedCornerShape(
+                                CornerSize(transitionData.cornerRadius),
+                                CornerSize(transitionData.cornerRadius),
+                                CornerSize(transitionData.cornerRadius),
+                                CornerSize(transitionData.cornerRadius)
+                            )
+                        ),
+                ) {}
+            }
         }
     }
 }
@@ -98,27 +110,56 @@ private fun updateProgressTransitionData(
     state: TimerState,
     progress: Int,
     maxHeight: Dp,
-    maxWidth: Dp
+    realMaxHeight: Dp
 ): ProgressTransitionData {
+    val bottomOffset = (maxHeight - realMaxHeight) / 2
     val transition = updateTransition(state)
-    val padding = transition.animateDp { timerState ->
+    val padding = transition.animateDp(
+        transitionSpec = {
+            when {
+                TimerState.Stop isTransitioningTo TimerState.Running -> {
+                    keyframes {
+                        durationMillis = 351
+                        bottomOffset + 44.dp at 35
+                        0.dp at 351
+                    }
+                }
+                else -> {
+                    keyframes {
+                        durationMillis = 300
+                        delayMillis = 150
+                        bottomOffset at 0
+                    }
+                }
+            }
+        }
+    ) { timerState ->
         if (timerState == TimerState.Stop) {
-            96.dp
+            bottomOffset + 96.dp
         } else {
-            0.dp
+            bottomOffset
         }
     }
     val height = transition.animateDp(
         transitionSpec = {
-
-            if (TimerState.Running isTransitioningTo TimerState.Stop) {
-                keyframes {
-                    durationMillis = 100
-                    248.dp at 0
+            when {
+                TimerState.Running isTransitioningTo TimerState.Stop ||
+                    TimerState.Paused isTransitioningTo TimerState.Stop -> {
+                    keyframes {
+                        durationMillis = 300
+                        delayMillis = 150
+                        248.dp at 1
+                    }
                 }
-            } else {
-                keyframes {
-                    durationMillis = 150
+                TimerState.Stop isTransitioningTo TimerState.Running -> {
+                    keyframes {
+                        durationMillis = 350
+                    }
+                }
+                else -> {
+                    keyframes {
+                        durationMillis = 350
+                    }
                 }
             }
         }
@@ -128,21 +169,31 @@ private fun updateProgressTransitionData(
                 56.dp
             }
             else -> {
-                maxHeight * progress / 100
+                realMaxHeight * progress / 100
             }
         }
     }
 
     val width = transition.animateDp(
         transitionSpec = {
-            if (TimerState.Running isTransitioningTo TimerState.Stop) {
-                keyframes {
-                    durationMillis = 100
-                    248.dp at 0
+            when {
+                TimerState.Running isTransitioningTo TimerState.Stop ||
+                    TimerState.Paused isTransitioningTo TimerState.Stop -> {
+                    keyframes {
+                        durationMillis = 300
+                        delayMillis = 150
+                        248.dp at 1
+                    }
                 }
-            } else {
-                keyframes {
-                    durationMillis = 150
+                TimerState.Stop isTransitioningTo TimerState.Running -> {
+                    keyframes {
+                        durationMillis = 350
+                    }
+                }
+                else -> {
+                    keyframes {
+                        durationMillis = 350
+                    }
                 }
             }
         }
@@ -150,29 +201,24 @@ private fun updateProgressTransitionData(
         if (timerState == TimerState.Stop) {
             56.dp
         } else {
-            maxHeight // to keep ripple circular form
+            realMaxHeight // to keep ripple circular form
         }
     }
 
     val cornerRadius = transition.animateDp(
         transitionSpec = {
             when {
-                TimerState.Running isTransitioningTo TimerState.Stop -> {
-                    keyframes {
-                        durationMillis = 100
-                        124.dp at 0
-                    }
-                }
                 TimerState.Stop isTransitioningTo TimerState.Running -> {
                     keyframes {
-                        durationMillis = 150
-                        maxWidth / 2 at 20
+                        durationMillis = 350
+                        realMaxHeight / 2 at 345
                     }
                 }
                 else -> {
                     keyframes {
-                        durationMillis = 0
-                        0.dp at 0
+                        durationMillis = 300
+                        delayMillis = 150
+                        124.dp at 1
                     }
                 }
             }
@@ -198,5 +244,5 @@ private fun updateProgressTransitionData(
 @Preview(widthDp = 360, heightDp = 480)
 @Composable
 fun ProgressBackgroundPreview() {
-    ProgressBackground(state = TimerState.Stop, progress = 0)
+    ProgressBackground(state = TimerState.Stop, progress = 100)
 }
